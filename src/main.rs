@@ -3,6 +3,7 @@
 mod cli;
 mod db;
 mod model;
+mod web;
 
 use anyhow::Result;
 use clap::Parser;
@@ -14,7 +15,8 @@ fn get_db_path() -> PathBuf {
     PathBuf::from(path)
 }
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let cli = cli::Cli::parse();
 
     let db_path = get_db_path();
@@ -37,6 +39,9 @@ fn main() -> Result<()> {
         }
         cli::Commands::Like(cmd) => {
             cli::like::run(&conn, &cmd.subcommand)?;
+        }
+        cli::Commands::Web { port, host } => {
+            web::start(conn, host, *port).await;
         }
     }
 

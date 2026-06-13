@@ -25,4 +25,10 @@ pub enum Commands {
     Post(PostCommand),
     Follow(FollowCommand),
     Like(LikeCommand),
+    Web {
+        #[arg(long, default_value_t = 8080)]
+        port: u16,
+        #[arg(long, default_value = "127.0.0.1")]
+        host: String,
+    },
 }
