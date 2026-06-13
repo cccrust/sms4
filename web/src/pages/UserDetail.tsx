@@ -107,16 +107,24 @@ export default function UserDetail() {
             <p className="text-sm text-gray-500">@{user.username}</p>
           </div>
           {currentUserId && currentUserId !== user.id && (
-            <button
-              onClick={handleFollow}
-              className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition ${
-                isFollowing
-                  ? "bg-transparent text-white border border-gray-600 hover:border-red-500 hover:text-red-500"
-                  : "bg-white text-black hover:bg-gray-200"
-              }`}
-            >
-              {isFollowing ? "追蹤中" : "追蹤"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate(`/messages/${user.id}?uid=${currentUserId}`)}
+                className="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold bg-blue-500 text-white hover:bg-blue-600 transition"
+              >
+                傳送訊息
+              </button>
+              <button
+                onClick={handleFollow}
+                className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition ${
+                  isFollowing
+                    ? "bg-transparent text-white border border-gray-600 hover:border-red-500 hover:text-red-500"
+                    : "bg-white text-black hover:bg-gray-200"
+                }`}
+              >
+                {isFollowing ? "追蹤中" : "追蹤"}
+              </button>
+            </div>
           )}
         </div>
 

@@ -3,10 +3,14 @@
 set -euo pipefail
 
 SMS4=${SMS4:-cargo run --}
-DB="sms4-dev.db"
+DB="${SMS4_DB:-sms4-dev.db}"
 
-rm -f $DB
+if [ -f "$DB" ]; then
+    echo "⚠️  資料庫 $DB 已存在，刪除重建..."
+    rm -f "$DB"
+fi
 
+echo ""
 echo "=== 1. 初始化資料庫 ==="
 SMS4_DB="$DB" $SMS4 init
 
@@ -142,13 +146,68 @@ SMS4_DB="$DB" $SMS4 like add 2 7
 SMS4_DB="$DB" $SMS4 like add 10 7
 
 echo ""
+echo "=== 7. 交友資料 (15 筆) ==="
+SMS4_DB="$DB" $SMS4 profile set 1  --birthday 1995-03-15 --gender male   --city 台北 --occupation 工程師     --height 175 --looking-for friend --about-me "喜歡爬山和攝影，假日都在戶外"
+SMS4_DB="$DB" $SMS4 profile set 2  --birthday 1993-07-20 --gender male   --city 新竹 --occupation 程式設計師   --height 180 --looking-for any   --about-me "咖啡成癮者，Rust 愛好者"
+SMS4_DB="$DB" $SMS4 profile set 3  --birthday 1998-12-01 --gender female --city 台北 --occupation 美食部落客   --height 162 --looking-for friend --about-me "吃遍全台美食，喜歡自煮"
+SMS4_DB="$DB" $SMS4 profile set 4  --birthday 1990-05-10 --gender male   --city 台中 --occupation 音樂創作人   --height 178 --looking-for date  --about-me "鋼琴和吉他，偶爾寫寫歌"
+SMS4_DB="$DB" $SMS4 profile set 5  --birthday 1996-09-03 --gender female --city 高雄 --occupation 瑜伽老師     --height 168 --looking-for friend --about-me "身心靈平衡，推廣正念生活"
+SMS4_DB="$DB" $SMS4 profile set 6  --birthday 1988-11-18 --gender male   --city 台北 --occupation 金融分析師   --height 172 --looking-for any   --about-me "價值投資者，喜歡閱讀財報"
+SMS4_DB="$DB" $SMS4 profile set 7  --birthday 1997-04-22 --gender female --city 台中 --occupation 插畫家       --height 160 --looking-for friend --about-me "水彩和數位插畫，貓奴一枚"
+SMS4_DB="$DB" $SMS4 profile set 8  --birthday 1994-08-14 --gender male   --city 新北 --occupation 健身教練     --height 185 --looking-for any   --about-me "重訓和戶外運動，歡迎交流"
+SMS4_DB="$DB" $SMS4 profile set 9  --birthday 1999-02-28 --gender female --city 台北 --occupation 美妝顧問     --height 165 --looking-for date  --about-me "彩妝教學和保養分享"
+SMS4_DB="$DB" $SMS4 profile set 10 --birthday 1992-06-07 --gender male   --city 花蓮 --occupation 旅遊作家     --height 176 --looking-for friend --about-me "走遍世界各地，記錄旅途故事"
+SMS4_DB="$DB" $SMS4 profile set 11 --birthday 1991-10-30 --gender female --city 台南 --occupation 書評作家     --height 163 --looking-for friend --about-me "一個月讀十本書，寫讀書筆記"
+SMS4_DB="$DB" $SMS4 profile set 12 --birthday 2000-01-05 --gender male   --city 屏東 --occupation 寵物攝影師   --height 170 --looking-for any   --about-me "專拍貓狗，動物攝影師"
+SMS4_DB="$DB" $SMS4 profile set 13 --birthday 1997-07-15 --gender female --city 台北 --occupation 手作設計師   --height 158 --looking-for friend --about-me "皮革和布藝手作，熱愛 DIY"
+SMS4_DB="$DB" $SMS4 profile set 14 --birthday 1994-03-22 --gender male   --city 新竹 --occupation 科技產品經理 --height 177 --looking-for date  --about-me "AI 和區塊鏈，科技趨勢觀察"
+SMS4_DB="$DB" $SMS4 profile set 15 --birthday 1996-12-09 --gender female --city 台北 --occupation 環保倡議者   --height 166 --looking-for friend --about-me "零浪費生活實踐者，淨灘志工"
+
+echo ""
+echo "=== 8. 興趣標籤 ==="
+SMS4_DB="$DB" $SMS4 interest add 1 爬山
+SMS4_DB="$DB" $SMS4 interest add 1 攝影
+SMS4_DB="$DB" $SMS4 interest add 2 咖啡
+SMS4_DB="$DB" $SMS4 interest add 2 程式
+SMS4_DB="$DB" $SMS4 interest add 3 美食
+SMS4_DB="$DB" $SMS4 interest add 3 烹飪
+SMS4_DB="$DB" $SMS4 interest add 4 音樂
+SMS4_DB="$DB" $SMS4 interest add 4 鋼琴
+SMS4_DB="$DB" $SMS4 interest add 5 瑜珈
+SMS4_DB="$DB" $SMS4 interest add 5 冥想
+SMS4_DB="$DB" $SMS4 interest add 6 投資
+SMS4_DB="$DB" $SMS4 interest add 6 閱讀
+SMS4_DB="$DB" $SMS4 interest add 7 插畫
+SMS4_DB="$DB" $SMS4 interest add 7 貓
+SMS4_DB="$DB" $SMS4 interest add 8 健身
+SMS4_DB="$DB" $SMS4 interest add 8 跑步
+SMS4_DB="$DB" $SMS4 interest add 9 美妝
+SMS4_DB="$DB" $SMS4 interest add 9 時尚
+SMS4_DB="$DB" $SMS4 interest add 10 旅行
+SMS4_DB="$DB" $SMS4 interest add 10 攝影
+SMS4_DB="$DB" $SMS4 interest add 11 閱讀
+SMS4_DB="$DB" $SMS4 interest add 11 寫作
+SMS4_DB="$DB" $SMS4 interest add 12 寵物
+SMS4_DB="$DB" $SMS4 interest add 12 攝影
+SMS4_DB="$DB" $SMS4 interest add 13 手作
+SMS4_DB="$DB" $SMS4 interest add 13 設計
+SMS4_DB="$DB" $SMS4 interest add 14 科技
+SMS4_DB="$DB" $SMS4 interest add 14 AI
+SMS4_DB="$DB" $SMS4 interest add 15 環保
+SMS4_DB="$DB" $SMS4 interest add 15 志工
+
+echo ""
 echo "=== 假資料填入完成 ==="
 echo ""
 echo "  使用者: 15 筆"
 echo "  貼文:   30 筆（含 10 則回覆）"
 echo "  追蹤:   35 筆"
 echo "  按讚:   15 筆"
+echo "  交友資料: 15 筆"
+echo "  興趣標籤: 30 筆"
 echo ""
 echo "啟動互動："
 echo "  SMS4_DB=$DB cargo run -- post timeline 1"
 echo "  SMS4_DB=$DB cargo run -- post get 1"
+echo "  SMS4_DB=$DB cargo run -- profile search --city 台北"
+echo "  SMS4_DB=$DB cargo run -- profile search --tags 攝影"
