@@ -74,6 +74,33 @@ export const api = {
     unread: (userId: number) =>
       request<{ unread: number }>(`/messages/${userId}/unread`),
   },
+  profiles: {
+    get: (userId: number) =>
+      request<{ profile: import("../types").Profile; tags: string[] }>(`/profiles/${userId}`),
+    update: (userId: number, data: Record<string, string | number | null>) =>
+      request<{ message: string }>(`/profiles/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    search: (params: Record<string, string>) =>
+      request<{ results: import("../types").ProfileWithUser[]; count: number }>(
+        `/profiles/search?${new URLSearchParams(params)}`
+      ),
+  },
+  interests: {
+    add: (userId: number, tag: string) =>
+      request<{ id: number }>("/interests", {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId, tag }),
+      }),
+    remove: (userId: number, tag: string) =>
+      request<{ message: string }>("/interests", {
+        method: "DELETE",
+        body: JSON.stringify({ user_id: userId, tag }),
+      }),
+    list: (userId: number) =>
+      request<{ interests: import("../types").Interest[] }>(`/interests/${userId}`),
+  },
   likes: {
     add: (user_id: number, post_id: number) =>
       request<{ message: string }>("/likes", {

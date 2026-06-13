@@ -1,7 +1,9 @@
 pub mod follow;
+pub mod interest;
 pub mod like;
 pub mod message;
 pub mod post;
+pub mod profile;
 pub mod user;
 
 use axum::routing::{delete, get, post, put};
@@ -26,4 +28,8 @@ pub fn build_routes() -> Router<crate::web::AppState> {
         .route("/messages/{user_id}/conversations", get(message::conversations))
         .route("/messages/{user_id}/unread", get(message::unread))
         .route("/messages/{user_id}/{other_id}", get(message::messages))
+        .route("/profiles/{user_id}", get(profile::get).put(profile::update))
+        .route("/profiles/search", get(profile::search))
+        .route("/interests", post(interest::add).delete(interest::remove))
+        .route("/interests/{user_id}", get(interest::list))
 }

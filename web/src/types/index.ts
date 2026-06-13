@@ -64,3 +64,39 @@ export interface Conversation {
   last_message_at: string;
   unread_count: number;
 }
+
+export interface Profile {
+  user_id: number;
+  birthday: string | null;
+  gender: string | null;
+  city: string | null;
+  occupation: string | null;
+  education: string | null;
+  height: number | null;
+  looking_for: string | null;
+  about_me: string | null;
+  updated_at: string;
+}
+
+export interface ProfileWithUser {
+  user_id: number;
+  username: string;
+  display_name: string;
+  bio: string | null;
+  birthday: string | null;
+  gender: string | null;
+  city: string | null;
+  occupation: string | null;
+  education: string | null;
+  height: number | null;
+  looking_for: string | null;
+  about_me: string | null;
+  tags: string[];
+  age: number | null;
+}
+
+export interface Interest {
+  id: number;
+  user_id: number;
+  tag: string;
+}

@@ -53,3 +53,26 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (receiver_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS profiles (
+    user_id      INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    birthday     TEXT,
+    gender       TEXT,
+    city         TEXT,
+    occupation   TEXT,
+    education    TEXT,
+    height       INTEGER,
+    looking_for  TEXT DEFAULT 'friend',
+    about_me     TEXT,
+    updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS interests (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    tag          TEXT NOT NULL COLLATE NOCASE,
+    UNIQUE(user_id, tag)
+);
+
+CREATE INDEX IF NOT EXISTS idx_interests_tag ON interests(tag);
+CREATE INDEX IF NOT EXISTS idx_interests_user ON interests(user_id);

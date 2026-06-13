@@ -15,3 +15,7 @@ pub fn success_msg(text: &str) -> String {
 pub fn info_msg(text: &str) -> String {
     format!("{}", text.yellow())
 }
+
+pub fn label(text: &str) -> String {
+    format!("{}", text.bright_white().bold())
+}

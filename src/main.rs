@@ -43,6 +43,12 @@ async fn main() -> Result<()> {
         cli::Commands::Message(cmd) => {
             cli::message::run(&conn, &cmd.subcommand)?;
         }
+        cli::Commands::Profile(cmd) => {
+            cli::profile::run(&conn, &cmd.subcommand)?;
+        }
+        cli::Commands::Interest(cmd) => {
+            cli::interest::run(&conn, &cmd.subcommand)?;
+        }
         cli::Commands::Web { port, host, dev } => {
             web::start(conn, host, *port, *dev).await;
         }

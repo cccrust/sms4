@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const navItems = [
   { label: "首頁", to: "/", icon: "🏠" },
+  { label: "配對", to: "/search", icon: "🔍" },
   { label: "私訊", to: "/messages", icon: "✉️" },
   { label: "使用者", to: "/users", icon: "👤" },
 ];
