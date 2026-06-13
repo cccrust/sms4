@@ -30,5 +30,7 @@ pub enum Commands {
         port: u16,
         #[arg(long, default_value = "127.0.0.1")]
         host: String,
+        #[arg(long)]
+        dev: bool,
     },
 }
