@@ -61,6 +61,19 @@ export const api = {
         body: JSON.stringify({ follower_id, followee_id }),
       }),
   },
+  messages: {
+    send: (sender_id: number, receiver_id: number, content: string) =>
+      request<{ id: number; message: string }>("/messages/send", {
+        method: "POST",
+        body: JSON.stringify({ sender_id, receiver_id, content }),
+      }),
+    conversations: (userId: number) =>
+      request<import("../types").Conversation[]>(`/messages/${userId}/conversations`),
+    messages: (userId: number, otherId: number) =>
+      request<import("../types").MessageWithUser[]>(`/messages/${userId}/${otherId}`),
+    unread: (userId: number) =>
+      request<{ unread: number }>(`/messages/${userId}/unread`),
+  },
   likes: {
     add: (user_id: number, post_id: number) =>
       request<{ message: string }>("/likes", {

@@ -40,6 +40,9 @@ async fn main() -> Result<()> {
         cli::Commands::Like(cmd) => {
             cli::like::run(&conn, &cmd.subcommand)?;
         }
+        cli::Commands::Message(cmd) => {
+            cli::message::run(&conn, &cmd.subcommand)?;
+        }
         cli::Commands::Web { port, host, dev } => {
             web::start(conn, host, *port, *dev).await;
         }

@@ -1,5 +1,6 @@
 pub mod follow;
 pub mod like;
+pub mod message;
 pub mod post;
 pub mod user;
 
@@ -21,4 +22,8 @@ pub fn build_routes() -> Router<crate::web::AppState> {
         .route("/posts/{id}/reply", post(post::reply))
         .route("/follow", post(follow::follow).delete(follow::unfollow))
         .route("/likes", post(like::like).delete(like::unlike))
+        .route("/messages/send", post(message::send))
+        .route("/messages/{user_id}/conversations", get(message::conversations))
+        .route("/messages/{user_id}/unread", get(message::unread))
+        .route("/messages/{user_id}/{other_id}", get(message::messages))
 }

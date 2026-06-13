@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Timeline from "./pages/Timeline";
+import Messages from "./pages/Messages";
+import Conversation from "./pages/Conversation";
 import UserList from "./pages/UserList";
 import UserDetail from "./pages/UserDetail";
 import PostDetail from "./pages/PostDetail";
@@ -11,6 +13,8 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Timeline />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="messages/:otherId" element={<Conversation />} />
           <Route path="users" element={<UserList />} />
           <Route path="users/:id" element={<UserDetail />} />
           <Route path="posts/:id" element={<PostDetail />} />

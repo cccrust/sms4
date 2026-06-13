@@ -42,3 +42,25 @@ export interface UserBrief {
   username: string;
   display_name: string;
 }
+
+export interface MessageWithUser {
+  id: number;
+  sender_id: number;
+  receiver_id: number;
+  content: string;
+  read: number;
+  created_at: string;
+  sender_username: string;
+  sender_display_name: string;
+  receiver_username: string;
+  receiver_display_name: string;
+}
+
+export interface Conversation {
+  other_user_id: number;
+  other_username: string;
+  other_display_name: string;
+  last_message: string;
+  last_message_at: string;
+  unread_count: number;
+}
