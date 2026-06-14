@@ -1,3 +1,4 @@
+pub mod auth;
 pub mod follow;
 pub mod interest;
 pub mod like;
@@ -11,6 +12,9 @@ use axum::Router;
 
 pub fn build_routes() -> Router<crate::web::AppState> {
     Router::new()
+        .route("/auth/register", post(auth::register))
+        .route("/auth/login", post(auth::login))
+        .route("/auth/logout", post(auth::logout))
         .route("/users", get(user::list).post(user::create))
         .route(
             "/users/{id}",

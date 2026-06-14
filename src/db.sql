@@ -1,13 +1,22 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    username     TEXT UNIQUE NOT NULL,
-    display_name TEXT NOT NULL,
-    bio          TEXT,
-    avatar       TEXT,
-    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    username      TEXT UNIQUE NOT NULL,
+    display_name  TEXT NOT NULL,
+    password_hash TEXT,
+    bio           TEXT,
+    avatar        TEXT,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL,
+    token      TEXT UNIQUE NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS posts (

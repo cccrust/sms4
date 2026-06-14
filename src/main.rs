@@ -28,6 +28,9 @@ async fn main() -> Result<()> {
             db::init_db(&conn)?;
             println!("資料庫已初始化：{}", db_path.display());
         }
+        cli::Commands::Auth(cmd) => {
+            cli::auth::run(&conn, &cmd.subcommand)?;
+        }
         cli::Commands::User(cmd) => {
             cli::user::run(&conn, &cmd.subcommand)?;
         }
