@@ -149,8 +149,8 @@ mod tests {
     #[test]
     fn test_send_and_list() {
         let c = conn();
-        let u1 = user::create_user(&c, "alice", "Alice", None).unwrap();
-        let u2 = user::create_user(&c, "bob", "Bob", None).unwrap();
+        let u1 = user::create_user(&c, "alice", "Alice", None, None).unwrap();
+        let u2 = user::create_user(&c, "bob", "Bob", None, None).unwrap();
         let mid = send_message(&c, u1, u2, "哈囉！").unwrap();
         assert!(mid > 0);
         let convs = list_conversations(&c, u1).unwrap();
@@ -165,8 +165,8 @@ mod tests {
     #[test]
     fn test_unread_and_mark_read() {
         let c = conn();
-        let u1 = user::create_user(&c, "alice", "Alice", None).unwrap();
-        let u2 = user::create_user(&c, "bob", "Bob", None).unwrap();
+        let u1 = user::create_user(&c, "alice", "Alice", None, None).unwrap();
+        let u2 = user::create_user(&c, "bob", "Bob", None, None).unwrap();
         send_message(&c, u2, u1, "嗨 alice").unwrap();
         assert_eq!(get_unread_count(&c, u1).unwrap(), 1);
         mark_read(&c, u1, u2).unwrap();

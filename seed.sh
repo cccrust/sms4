@@ -15,22 +15,22 @@ echo "=== 1. 初始化資料庫 ==="
 SMS4_DB="$DB" $SMS4 init
 
 echo ""
-echo "=== 2. 建立使用者 (15 筆) ==="
-SMS4_DB="$DB" $SMS4 user add alice    愛麗絲   --bio "喜歡旅行和攝影 📸"
-SMS4_DB="$DB" $SMS4 user add bob      鮑勃     --bio "程式設計師 & 咖啡愛好者"
-SMS4_DB="$DB" $SMS4 user add carol    卡蘿     --bio "美食部落客"
-SMS4_DB="$DB" $SMS4 user add dave     大衛     --bio "音樂創作者"
-SMS4_DB="$DB" $SMS4 user add eve      小伊     --bio "瑜伽老師"
-SMS4_DB="$DB" $SMS4 user add frank    法蘭克   --bio "股票投資人"
-SMS4_DB="$DB" $SMS4 user add grace    葛蕾絲   --bio "插畫家"
-SMS4_DB="$DB" $SMS4 user add henry    亨利     --bio "健身教練"
-SMS4_DB="$DB" $SMS4 user add iris     艾瑞絲   --bio "美妝達人"
-SMS4_DB="$DB" $SMS4 user add jack     傑克     --bio "旅遊部落客"
-SMS4_DB="$DB" $SMS4 user add kate     凱特     --bio "書評作家"
-SMS4_DB="$DB" $SMS4 user add leo      里歐     --bio "寵物攝影師"
-SMS4_DB="$DB" $SMS4 user add may      小梅     --bio "手作達人"
-SMS4_DB="$DB" $SMS4 user add nick     尼克     --bio "科技評論"
-SMS4_DB="$DB" $SMS4 user add olivia   奧莉維亞 --bio "環保倡議者"
+echo "=== 2. 建立使用者 (15 筆，附密碼) ==="
+SMS4_DB="$DB" $SMS4 user add alice    愛麗絲   --bio "喜歡旅行和攝影 📸"    --password alice123
+SMS4_DB="$DB" $SMS4 user add bob      鮑勃     --bio "程式設計師 & 咖啡愛好者"  --password bob123
+SMS4_DB="$DB" $SMS4 user add carol    卡蘿     --bio "美食部落客"               --password carol123
+SMS4_DB="$DB" $SMS4 user add dave     大衛     --bio "音樂創作者"               --password dave123
+SMS4_DB="$DB" $SMS4 user add eve      小伊     --bio "瑜伽老師"                  --password eve123
+SMS4_DB="$DB" $SMS4 user add frank    法蘭克   --bio "股票投資人"               --password frank123
+SMS4_DB="$DB" $SMS4 user add grace    葛蕾絲   --bio "插畫家"                    --password grace123
+SMS4_DB="$DB" $SMS4 user add henry    亨利     --bio "健身教練"                  --password henry123
+SMS4_DB="$DB" $SMS4 user add iris     艾瑞絲   --bio "美妝達人"                  --password iris123
+SMS4_DB="$DB" $SMS4 user add jack     傑克     --bio "旅遊部落客"                --password jack123
+SMS4_DB="$DB" $SMS4 user add kate     凱特     --bio "書評作家"                  --password kate123
+SMS4_DB="$DB" $SMS4 user add leo      里歐     --bio "寵物攝影師"                --password leo123
+SMS4_DB="$DB" $SMS4 user add may      小梅     --bio "手作達人"                  --password may123
+SMS4_DB="$DB" $SMS4 user add nick     尼克     --bio "科技評論"                  --password nick123
+SMS4_DB="$DB" $SMS4 user add olivia   奧莉維亞 --bio "環保倡議者"               --password olivia123
 
 echo ""
 echo "=== 3. 建立貼文 (30 筆) ==="
@@ -205,6 +205,16 @@ echo "  追蹤:   35 筆"
 echo "  按讚:   15 筆"
 echo "  交友資料: 15 筆"
 echo "  興趣標籤: 30 筆"
+echo ""
+echo "登入帳號（密碼皆為 <username>123）："
+echo "  alice / bob / carol / dave / eve / frank / grace"
+echo "  henry / iris / jack / kate / leo / may / nick / olivia"
+echo ""
+echo "CLI 登入範例："
+echo "  SMS4_DB=$DB cargo run -- auth login alice alice123"
+echo ""
+echo "Web 啟動："
+echo "  SMS4_DB=$DB cargo run -- web --dev"
 echo ""
 echo "啟動互動："
 echo "  SMS4_DB=$DB cargo run -- post timeline 1"

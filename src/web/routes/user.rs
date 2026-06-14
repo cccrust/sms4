@@ -72,7 +72,7 @@ pub async fn create(
     Json(payload): Json<CreatePayload>,
 ) -> Result<Json<user::User>, AppError> {
     let conn = state.conn.lock().unwrap();
-    let id = user::create_user(&conn, &payload.username, &payload.display_name, payload.bio.as_deref())?;
+    let id = user::create_user(&conn, &payload.username, &payload.display_name, payload.bio.as_deref(), None)?;
     let u = user::get_user(&conn, id)?.ok_or_else(|| AppError::Internal("建立後查詢失敗".into()))?;
     Ok(Json(u))
 }

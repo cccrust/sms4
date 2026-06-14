@@ -13,12 +13,17 @@ pub struct User {
     pub updated_at: String,
 }
 
-pub fn create_user(conn: &Connection, username: &str, display_name: &str, bio: Option<&str>) -> Result<i64> {
+pub fn create_user(conn: &Connection, username: &str, display_name: &str, bio: Option<&str>, password: Option<&str>) -> Result<i64> {
     conn.execute(
         "INSERT INTO users (username, display_name, bio) VALUES (?1, ?2, ?3)",
         params![username, display_name, bio],
     )?;
-    Ok(conn.last_insert_rowid())
+    let id = conn.last_insert_rowid();
+    if let Some(pw) = password {
+        let hash = bcrypt::hash(pw, bcrypt::DEFAULT_COST)?;
+        crate::db::set_password(conn, id, &hash)?;
+    }
+    Ok(id)
 }
 
 pub fn list_users(conn: &Connection, search: Option<&str>) -> Result<Vec<User>> {
@@ -111,7 +116,7 @@ mod tests {
     #[test]
     fn test_create_and_get() {
         let c = conn();
-        let id = create_user(&c, "alice", "Alice", Some("Hello!")).unwrap();
+        let id = create_user(&c, "alice", "Alice", Some("Hello!"), None).unwrap();
         let u = get_user(&c, id).unwrap().unwrap();
         assert_eq!(u.username, "alice");
         assert_eq!(u.display_name, "Alice");
@@ -121,8 +126,8 @@ mod tests {
     #[test]
     fn test_list_search() {
         let c = conn();
-        create_user(&c, "alice", "Alice", None).unwrap();
-        create_user(&c, "bob", "Bob", None).unwrap();
+        create_user(&c, "alice", "Alice", None, None).unwrap();
+        create_user(&c, "bob", "Bob", None, None).unwrap();
         let res = list_users(&c, Some("alice")).unwrap();
         assert_eq!(res.len(), 1);
         let res = list_users(&c, None).unwrap();
@@ -132,7 +137,7 @@ mod tests {
     #[test]
     fn test_delete() {
         let c = conn();
-        let id = create_user(&c, "temp", "Temp", None).unwrap();
+        let id = create_user(&c, "temp", "Temp", None, None).unwrap();
         assert!(delete_user(&c, id).unwrap());
         assert!(get_user(&c, id).unwrap().is_none());
     }

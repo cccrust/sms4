@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { User } from "../types";
-import { api } from "../api/client";
+import { api, setToken as setApiToken } from "../api/client";
 
 interface AuthContextType {
   user: User | null;
@@ -21,26 +21,37 @@ function getStoredToken(): string | null {
   }
 }
 
-function storeToken(token: string | null) {
-  if (token) {
+function getStoredUser(): User | null {
+  try {
+    const raw = localStorage.getItem("sms4_user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeSession(token: string | null, user: User | null) {
+  if (token && user) {
     localStorage.setItem("sms4_token", token);
+    localStorage.setItem("sms4_user", JSON.stringify(user));
   } else {
     localStorage.removeItem("sms4_token");
+    localStorage.removeItem("sms4_user");
   }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(getStoredToken());
+  const [user, setUser] = useState<User | null>(getStoredUser());
+  const [token, setTokenState] = useState<string | null>(getStoredToken());
 
   useEffect(() => {
-    api.setToken(token);
+    setApiToken(token);
   }, [token]);
 
   const login = async (username: string, password: string) => {
     const res = await api.auth.login(username, password);
-    storeToken(res.token);
-    setToken(res.token);
+    storeSession(res.token, res.user);
+    setTokenState(res.token);
     setUser(res.user);
   };
 
@@ -52,8 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       api.auth.logout(token).catch(() => {});
     }
-    storeToken(null);
-    setToken(null);
+    storeSession(null, null);
+    setTokenState(null);
     setUser(null);
   };
 

@@ -179,7 +179,7 @@ mod tests {
     #[test]
     fn test_create_and_list() {
         let c = conn();
-        let uid = user::create_user(&c, "alice", "Alice", None).unwrap();
+        let uid = user::create_user(&c, "alice", "Alice", None, None).unwrap();
         let pid = create_post(&c, uid, "Hello world!", None).unwrap();
         let posts = list_posts(&c, None, 10, 0).unwrap();
         assert_eq!(posts.len(), 1);
@@ -190,7 +190,7 @@ mod tests {
     #[test]
     fn test_reply() {
         let c = conn();
-        let uid = user::create_user(&c, "alice", "Alice", None).unwrap();
+        let uid = user::create_user(&c, "alice", "Alice", None, None).unwrap();
         let pid = create_post(&c, uid, "First!", None).unwrap();
         let rid = create_post(&c, uid, "Reply!", Some(pid)).unwrap();
         let p = get_post(&c, pid).unwrap().unwrap();

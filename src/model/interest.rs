@@ -63,7 +63,7 @@ mod tests {
     #[test]
     fn test_add_and_list() {
         let c = conn();
-        let uid = user::create_user(&c, "alice", "Alice", None).unwrap();
+        let uid = user::create_user(&c, "alice", "Alice", None, None).unwrap();
         let id1 = add_interest(&c, uid, "爬山").unwrap();
         let id2 = add_interest(&c, uid, "攝影").unwrap();
         assert!(id1 > 0);
@@ -75,7 +75,7 @@ mod tests {
     #[test]
     fn test_remove() {
         let c = conn();
-        let uid = user::create_user(&c, "bob", "Bob", None).unwrap();
+        let uid = user::create_user(&c, "bob", "Bob", None, None).unwrap();
         add_interest(&c, uid, "咖啡").unwrap();
         assert!(remove_interest(&c, uid, "咖啡").unwrap());
         assert!(!remove_interest(&c, uid, "咖啡").unwrap());
@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn test_duplicate_ignored() {
         let c = conn();
-        let uid = user::create_user(&c, "carol", "Carol", None).unwrap();
+        let uid = user::create_user(&c, "carol", "Carol", None, None).unwrap();
         add_interest(&c, uid, "美食").unwrap();
         add_interest(&c, uid, "美食").unwrap();
         assert_eq!(list_interests(&c, uid).unwrap().len(), 1);

@@ -1,25 +1,37 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
-import type { Profile, Interest } from "../types";
+import { useAuth } from "../contexts/AuthContext";
+import type { Profile } from "../types";
 
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
+  const { user: authUser } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [user, setUser] = useState<{ id: number; username: string; display_name: string; bio: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
     if (!id) return;
     const fetch = async () => {
       try {
         const uid = parseInt(id);
-        const [userData, profileData] = await Promise.all([
+        const [userData, profileData, followersData] = await Promise.all([
           api.users.get(uid),
           api.profiles.get(uid).catch(() => null),
+          api.users.followers(uid).catch(() => [] as { id: number }[]),
         ]);
         setUser(userData);
+        setFollowersCount(userData.followers_count);
+        setFollowingCount(userData.following_count);
+        if (authUser) {
+          setIsFollowing(followersData.some((f: { id: number }) => f.id === authUser.id));
+        }
         if (profileData) {
           setProfile(profileData.profile);
           setTags(profileData.tags);
@@ -31,7 +43,20 @@ export default function ProfilePage() {
       }
     };
     fetch();
-  }, [id]);
+  }, [id, authUser]);
+
+  const handleFollow = async () => {
+    if (!authUser || !user) return;
+    if (isFollowing) {
+      await api.follow.remove(authUser.id, user.id);
+      setIsFollowing(false);
+      setFollowersCount((c) => c - 1);
+    } else {
+      await api.follow.add(authUser.id, user.id);
+      setIsFollowing(true);
+      setFollowersCount((c) => c + 1);
+    }
+  };
 
   if (loading) return <div className="text-center py-20 text-gray-500">載入中...</div>;
   if (!user) return <div className="text-center py-20 text-gray-500">使用者不存在</div>;
@@ -42,15 +67,44 @@ export default function ProfilePage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-4">
         <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-2xl font-bold shrink-0">
           {user.display_name[0]}
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <h2 className="text-xl font-bold text-white">{user.display_name}</h2>
           <p className="text-sm text-gray-500">@{user.username}</p>
           {user.bio && <p className="text-sm text-gray-400 mt-1">{user.bio}</p>}
         </div>
+        {authUser && authUser.id !== user.id && (
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => navigate(`/messages/${user.id}?uid=${authUser.id}`)}
+              className="px-4 py-1.5 rounded-full text-sm font-bold bg-blue-500 text-white hover:bg-blue-600 transition"
+            >
+              傳送訊息
+            </button>
+            <button
+              onClick={handleFollow}
+              className={`px-4 py-1.5 rounded-full text-sm font-bold transition ${
+                isFollowing
+                  ? "bg-transparent text-white border border-gray-600 hover:border-red-500 hover:text-red-500"
+                  : "bg-white text-black hover:bg-gray-200"
+              }`}
+            >
+              {isFollowing ? "追蹤中" : "追蹤"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-4 text-sm mb-4">
+        <span className="text-gray-500">
+          <span className="font-bold text-white">{followingCount}</span> 追蹤中
+        </span>
+        <span className="text-gray-500">
+          <span className="font-bold text-white">{followersCount}</span> 粉絲
+        </span>
       </div>
 
       {!profile ? (

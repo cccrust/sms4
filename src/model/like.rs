@@ -51,7 +51,7 @@ mod tests {
     #[test]
     fn test_like_unlike() {
         let c = conn();
-        let uid = user::create_user(&c, "alice", "Alice", None).unwrap();
+        let uid = user::create_user(&c, "alice", "Alice", None, None).unwrap();
         let pid = post::create_post(&c, uid, "Hello!", None).unwrap();
         assert!(like_post(&c, uid, pid).unwrap());
         assert!(is_liked(&c, uid, pid).unwrap());
@@ -64,7 +64,7 @@ mod tests {
     #[test]
     fn test_like_duplicate() {
         let c = conn();
-        let uid = user::create_user(&c, "alice", "Alice", None).unwrap();
+        let uid = user::create_user(&c, "alice", "Alice", None, None).unwrap();
         let pid = post::create_post(&c, uid, "Hello!", None).unwrap();
         assert!(like_post(&c, uid, pid).unwrap());
         assert!(!like_post(&c, uid, pid).unwrap());

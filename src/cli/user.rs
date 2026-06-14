@@ -17,6 +17,8 @@ pub enum UserSubcommands {
         display_name: String,
         #[arg(long)]
         bio: Option<String>,
+        #[arg(long)]
+        password: Option<String>,
     },
     List {
         #[arg(long, short)]
@@ -39,8 +41,8 @@ pub enum UserSubcommands {
 
 pub fn run(conn: &Connection, cmd: &UserSubcommands) -> Result<()> {
     match cmd {
-        UserSubcommands::Add { username, display_name, bio } => {
-            match user::create_user(conn, username, display_name, bio.as_deref()) {
+        UserSubcommands::Add { username, display_name, bio, password } => {
+            match user::create_user(conn, username, display_name, bio.as_deref(), password.as_deref()) {
                 Ok(id) => println!("{}", fmt::success_msg(&format!("已建立使用者 #{}: @{} ({})", id, username, display_name))),
                 Err(e) => println!("{}", fmt::error_msg(&e.to_string())),
             }

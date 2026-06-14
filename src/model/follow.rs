@@ -91,8 +91,8 @@ mod tests {
     #[test]
     fn test_follow_and_list() {
         let c = conn();
-        let u1 = user::create_user(&c, "alice", "Alice", None).unwrap();
-        let u2 = user::create_user(&c, "bob", "Bob", None).unwrap();
+        let u1 = user::create_user(&c, "alice", "Alice", None, None).unwrap();
+        let u2 = user::create_user(&c, "bob", "Bob", None, None).unwrap();
         follow_user(&c, u1, u2).unwrap();
         let followers = list_followers(&c, u2).unwrap();
         assert_eq!(followers.len(), 1);
@@ -105,8 +105,8 @@ mod tests {
     #[test]
     fn test_unfollow() {
         let c = conn();
-        let u1 = user::create_user(&c, "alice", "Alice", None).unwrap();
-        let u2 = user::create_user(&c, "bob", "Bob", None).unwrap();
+        let u1 = user::create_user(&c, "alice", "Alice", None, None).unwrap();
+        let u2 = user::create_user(&c, "bob", "Bob", None, None).unwrap();
         follow_user(&c, u1, u2).unwrap();
         assert!(unfollow_user(&c, u1, u2).unwrap());
         assert_eq!(list_followers(&c, u2).unwrap().len(), 0);
@@ -115,7 +115,7 @@ mod tests {
     #[test]
     fn test_follow_self_fails() {
         let c = conn();
-        let u1 = user::create_user(&c, "alice", "Alice", None).unwrap();
+        let u1 = user::create_user(&c, "alice", "Alice", None, None).unwrap();
         assert!(follow_user(&c, u1, u1).is_err());
     }
 }
