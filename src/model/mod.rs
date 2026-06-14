@@ -7,3 +7,7 @@ pub mod like;
 pub mod message;
 pub mod profile;
 pub mod interest;
+pub mod shop;
+pub mod product;
+pub mod order;
+pub mod shop_message;

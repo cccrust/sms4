@@ -123,6 +123,19 @@ export default function UserDetail() {
               </button>
               <button
                 onClick={async () => {
+                  try {
+                    const shop = await api.shops.my(user.id);
+                    navigate(`/shop/${shop.id}`);
+                  } catch {
+                    alert("該使用者沒有商店");
+                  }
+                }}
+                className="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold bg-transparent text-gray-500 border border-gray-700 hover:text-white hover:border-white transition"
+              >
+                商店
+              </button>
+              <button
+                onClick={async () => {
                   if (isBlocked) {
                     await api.block.remove(authUser.id, user.id);
                     setIsBlocked(false);

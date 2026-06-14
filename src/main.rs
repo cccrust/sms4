@@ -55,6 +55,15 @@ async fn main() -> Result<()> {
         cli::Commands::Interest(cmd) => {
             cli::interest::run(&conn, &cmd.subcommand)?;
         }
+        cli::Commands::Shop(cmd) => {
+            cli::shop::run(&conn, &cmd.subcommand)?;
+        }
+        cli::Commands::Product(cmd) => {
+            cli::product::run(&conn, &cmd.subcommand)?;
+        }
+        cli::Commands::Order(cmd) => {
+            cli::order::run(&conn, &cmd.subcommand)?;
+        }
         cli::Commands::Web { port, host, dev } => {
             web::start(conn, host, *port, *dev).await;
         }

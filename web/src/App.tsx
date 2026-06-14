@@ -13,6 +13,12 @@ import MatchSearch from "./pages/MatchSearch";
 import UserList from "./pages/UserList";
 import UserDetail from "./pages/UserDetail";
 import PostDetail from "./pages/PostDetail";
+import Marketplace from "./pages/Marketplace";
+import MyShop from "./pages/MyShop";
+import ShopPage from "./pages/ShopPage";
+import Orders from "./pages/Orders";
+import ShopMessages from "./pages/ShopMessages";
+import ShopMessageList from "./pages/ShopMessageList";
 
 export default function App() {
   return (
@@ -32,6 +38,12 @@ export default function App() {
               <Route path="users" element={<UserList />} />
               <Route path="users/:id" element={<UserDetail />} />
               <Route path="posts/:id" element={<PostDetail />} />
+              <Route path="marketplace" element={<Marketplace />} />
+              <Route path="shop/:id" element={<ShopPage />} />
+              <Route path="my-shop" element={<MyShop />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="shop-messages" element={<ShopMessageList />} />
+              <Route path="shop-messages/:shopId" element={<ShopMessages />} />
             </Route>
           </Route>
         </Routes>

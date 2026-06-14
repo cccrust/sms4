@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 const navItems = [
   { label: "首頁", to: "/", icon: "🏠" },
   { label: "配對", to: "/search", icon: "🔍" },
+  { label: "商場", to: "/marketplace", icon: "🛒" },
   { label: "私訊", to: "/messages", icon: "✉️" },
   { label: "使用者", to: "/users", icon: "👤" },
 ];
@@ -18,6 +19,15 @@ export default function Layout() {
           <h1 className="text-xl font-bold text-white">SMS4</h1>
           {user && (
             <div className="flex items-center gap-3">
+              <NavLink to="/my-shop" className="text-xs text-gray-500 hover:text-white transition">
+                我的商店
+              </NavLink>
+              <NavLink to="/orders" className="text-xs text-gray-500 hover:text-white transition">
+                訂單
+              </NavLink>
+              <NavLink to="/shop-messages" className="text-xs text-gray-500 hover:text-white transition">
+                商店私訊
+              </NavLink>
               <NavLink to={`/users/${user.id}`} className="text-sm text-gray-400 hover:text-white transition">
                 @{user.username}
               </NavLink>

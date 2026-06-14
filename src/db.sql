@@ -98,3 +98,52 @@ CREATE TABLE IF NOT EXISTS blocks (
 
 CREATE INDEX IF NOT EXISTS idx_blocks_blocker ON blocks(blocker_id);
 CREATE INDEX IF NOT EXISTS idx_blocks_blocked ON blocks(blocked_id);
+
+CREATE TABLE IF NOT EXISTS shops (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER UNIQUE NOT NULL REFERENCES users(id),
+    name        TEXT NOT NULL,
+    description TEXT,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id     INTEGER NOT NULL REFERENCES shops(id),
+    name        TEXT NOT NULL,
+    description TEXT,
+    price       INTEGER NOT NULL,
+    stock       INTEGER NOT NULL DEFAULT 0,
+    image       TEXT,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_products_shop ON products(shop_id);
+CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    buyer_id    INTEGER NOT NULL REFERENCES users(id),
+    product_id  INTEGER NOT NULL REFERENCES products(id),
+    quantity    INTEGER NOT NULL DEFAULT 1,
+    total_price INTEGER NOT NULL,
+    status      TEXT NOT NULL DEFAULT 'pending',
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_orders_buyer ON orders(buyer_id);
+
+CREATE TABLE IF NOT EXISTS shop_messages (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_id     INTEGER NOT NULL REFERENCES shops(id),
+    sender_id   INTEGER NOT NULL REFERENCES users(id),
+    receiver_id INTEGER NOT NULL REFERENCES users(id),
+    content     TEXT NOT NULL,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_shop_messages_shop ON shop_messages(shop_id);
+CREATE INDEX IF NOT EXISTS idx_shop_messages_users ON shop_messages(sender_id, receiver_id);

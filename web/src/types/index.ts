@@ -95,8 +95,88 @@ export interface ProfileWithUser {
   age: number | null;
 }
 
+export interface ShopMessageWithUser {
+  id: number;
+  shop_id: number;
+  shop_name: string;
+  sender_id: number;
+  sender_username: string;
+  sender_display_name: string;
+  receiver_id: number;
+  receiver_username: string;
+  receiver_display_name: string;
+  content: string;
+  created_at: string;
+}
+
+export interface ShopConversation {
+  shop_id: number;
+  shop_name: string;
+  other_id: number;
+  last_message: string | null;
+  last_message_at: string | null;
+}
+
 export interface Interest {
   id: number;
   user_id: number;
   tag: string;
+}
+
+export interface Shop {
+  id: number;
+  user_id: number;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Product {
+  id: number;
+  shop_id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  image: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductWithShop {
+  id: number;
+  shop_id: number;
+  shop_name: string;
+  shop_user_id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  image: string | null;
+  created_at: string;
+}
+
+export interface Order {
+  id: number;
+  buyer_id: number;
+  product_id: number;
+  quantity: number;
+  total_price: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrderWithDetails {
+  id: number;
+  buyer_id: number;
+  product_id: number;
+  product_name: string;
+  shop_name: string;
+  shop_user_id: number;
+  quantity: number;
+  total_price: number;
+  status: string;
+  created_at: string;
 }

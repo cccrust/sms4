@@ -7,8 +7,11 @@ pub mod follow;
 pub mod interest;
 pub mod like;
 pub mod message;
+pub mod order;
 pub mod post;
+pub mod product;
 pub mod profile;
+pub mod shop;
 pub mod user;
 
 pub use auth::AuthCommand;
@@ -17,8 +20,11 @@ pub use follow::FollowCommand;
 pub use interest::InterestCommand;
 pub use like::LikeCommand;
 pub use message::MessageCommand;
+pub use order::OrderCommand;
 pub use post::PostCommand;
+pub use product::ProductCommand;
 pub use profile::ProfileCommand;
+pub use shop::ShopCommand;
 pub use user::UserCommand;
 
 #[derive(Parser)]
@@ -41,6 +47,9 @@ pub enum Commands {
     Message(MessageCommand),
     Profile(ProfileCommand),
     Interest(InterestCommand),
+    Shop(ShopCommand),
+    Product(ProductCommand),
+    Order(OrderCommand),
     Web {
         #[arg(long, default_value_t = 8080)]
         port: u16,

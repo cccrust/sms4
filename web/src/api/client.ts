@@ -160,4 +160,70 @@ export const api = {
         body: JSON.stringify({ user_id, post_id }),
       }),
   },
+  shops: {
+    open: (userId: number, name: string, description?: string) =>
+      request<{ shop: import("../types").Shop }>("/shops/open", {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId, name, description }),
+      }),
+    my: (userId: number) =>
+      request<import("../types").Shop>(`/shops?user_id=${userId}`),
+    get: (id: number) =>
+      request<import("../types").Shop>(`/shops/${id}`),
+    update: (id: number, userId: number, data: { name?: string; description?: string }) =>
+      request<import("../types").Shop>(`/shops/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ user_id: userId, ...data }),
+      }),
+    close: (userId: number) =>
+      request<{ closed: boolean }>("/shops/close", {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+  },
+  products: {
+    add: (shopId: number, userId: number, data: { name: string; price: number; stock?: number; description?: string }) =>
+      request<import("../types").Product>(`/products/shop/${shopId}`, {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId, ...data }),
+      }),
+    listByShop: (shopId: number) =>
+      request<import("../types").Product[]>(`/products/shop/${shopId}`),
+    get: (id: number) =>
+      request<import("../types").Product>(`/products/${id}`),
+    update: (id: number, userId: number, data: { name?: string; price?: number; stock?: number; description?: string }) =>
+      request<import("../types").Product>(`/products/${id}/update`, {
+        method: "PUT",
+        body: JSON.stringify({ user_id: userId, ...data }),
+      }),
+    remove: (id: number, userId: number) =>
+      request<{ removed: boolean }>(`/products/${id}`, {
+        method: "DELETE",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+    search: (params?: Record<string, string>) =>
+      request<import("../types").ProductWithShop[]>(`/products/search?${new URLSearchParams(params)}`),
+  },
+  shopMessages: {
+    send: (senderId: number, receiverId: number, shopId: number, content: string) =>
+      request<import("../types").ShopMessageWithUser>("/shop-messages/send", {
+        method: "POST",
+        body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, shop_id: shopId, content }),
+      }),
+    list: (shopId: number, userId: number, otherId: number) =>
+      request<import("../types").ShopMessageWithUser[]>(`/shop-messages/${shopId}?user_id=${userId}&other_id=${otherId}`),
+    conversations: (userId: number) =>
+      request<import("../types").ShopConversation[]>(`/shop-messages/conversations?user_id=${userId}`),
+  },
+  orders: {
+    create: (buyerId: number, productId: number, quantity?: number) =>
+      request<import("../types").Order>("/orders", {
+        method: "POST",
+        body: JSON.stringify({ buyer_id: buyerId, product_id: productId, quantity: quantity ?? 1 }),
+      }),
+    list: (userId: number) =>
+      request<import("../types").OrderWithDetails[]>(`/orders?user_id=${userId}`),
+    get: (id: number, userId: number) =>
+      request<import("../types").Order>(`/orders/${id}?user_id=${userId}`),
+  },
 };

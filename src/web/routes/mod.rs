@@ -4,8 +4,12 @@ pub mod follow;
 pub mod interest;
 pub mod like;
 pub mod message;
+pub mod order;
 pub mod post;
+pub mod product;
+pub mod shop_message;
 pub mod profile;
+pub mod shop;
 pub mod user;
 
 use axum::routing::{delete, get, post, put};
@@ -40,4 +44,17 @@ pub fn build_routes() -> Router<crate::web::AppState> {
         .route("/profiles/search", get(profile::search))
         .route("/interests", post(interest::add).delete(interest::remove))
         .route("/interests/{user_id}", get(interest::list))
+        .route("/shops/open", post(shop::open))
+        .route("/shops", get(shop::my_shop))
+        .route("/shops/{id}", get(shop::get).put(shop::update))
+        .route("/shops/close", post(shop::close))
+        .route("/products/search", get(product::search))
+        .route("/products/shop/{shop_id}", get(product::list_by_shop).post(product::add))
+        .route("/products/{id}", get(product::get).delete(product::remove))
+        .route("/products/{id}/update", put(product::update))
+        .route("/orders", post(order::create).get(order::list))
+        .route("/orders/{id}", get(order::get))
+        .route("/shop-messages/send", post(shop_message::send))
+        .route("/shop-messages/{shop_id}", get(shop_message::list))
+        .route("/shop-messages/conversations", get(shop_message::conversations))
 }
