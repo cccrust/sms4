@@ -18,6 +18,7 @@ export default function UserDetail() {
   const [showFollowing, setShowFollowing] = useState(false);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +26,7 @@ export default function UserDetail() {
       setLoading(true);
       try {
         const uid = parseInt(id);
-        const userData = await api.users.get(uid);
+        const userData = await api.users.get(uid, authUser?.id);
         setUser(userData);
 
         const [postsData, followersData, followingData] = await Promise.all([
@@ -39,6 +40,8 @@ export default function UserDetail() {
 
         if (authUser) {
           setIsFollowing(followersData.some((f) => f.id === authUser.id));
+          const blockCheck = await api.block.check(authUser.id, uid).catch(() => ({ blocked: false }));
+          setIsBlocked(blockCheck.blocked);
         }
       } catch {
         // ignore
@@ -117,6 +120,24 @@ export default function UserDetail() {
                 }`}
               >
                 {isFollowing ? "追蹤中" : "追蹤"}
+              </button>
+              <button
+                onClick={async () => {
+                  if (isBlocked) {
+                    await api.block.remove(authUser.id, user.id);
+                    setIsBlocked(false);
+                  } else {
+                    await api.block.add(authUser.id, user.id);
+                    setIsBlocked(true);
+                  }
+                }}
+                className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition ${
+                  isBlocked
+                    ? "bg-red-500 text-white hover:bg-red-600"
+                    : "bg-transparent text-gray-500 border border-gray-700 hover:border-red-500 hover:text-red-500"
+                }`}
+              >
+                {isBlocked ? "已封鎖" : "封鎖"}
               </button>
             </div>
           )}

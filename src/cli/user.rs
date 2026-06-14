@@ -48,7 +48,7 @@ pub fn run(conn: &Connection, cmd: &UserSubcommands) -> Result<()> {
             }
         }
         UserSubcommands::List { search } => {
-            let users = user::list_users(conn, search.as_deref())?;
+            let users = user::list_users(conn, search.as_deref(), None)?;
             if users.is_empty() {
                 println!("{}", fmt::info_msg("查無使用者。"));
                 return Ok(());

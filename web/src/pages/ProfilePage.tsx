@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<{ id: number; username: string; display_name: string; bio: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
@@ -22,7 +23,7 @@ export default function ProfilePage() {
       try {
         const uid = parseInt(id);
         const [userData, profileData, followersData] = await Promise.all([
-          api.users.get(uid),
+          api.users.get(uid, authUser?.id),
           api.profiles.get(uid).catch(() => null),
           api.users.followers(uid).catch(() => [] as { id: number }[]),
         ]);
@@ -31,6 +32,8 @@ export default function ProfilePage() {
         setFollowingCount(userData.following_count);
         if (authUser) {
           setIsFollowing(followersData.some((f: { id: number }) => f.id === authUser.id));
+          const blockCheck = await api.block.check(authUser.id, uid).catch(() => ({ blocked: false }));
+          setIsBlocked(blockCheck.blocked);
         }
         if (profileData) {
           setProfile(profileData.profile);
@@ -93,6 +96,24 @@ export default function ProfilePage() {
               }`}
             >
               {isFollowing ? "追蹤中" : "追蹤"}
+            </button>
+            <button
+              onClick={async () => {
+                if (isBlocked) {
+                  await api.block.remove(authUser.id, user.id);
+                  setIsBlocked(false);
+                } else {
+                  await api.block.add(authUser.id, user.id);
+                  setIsBlocked(true);
+                }
+              }}
+              className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition ${
+                isBlocked
+                  ? "bg-red-500 text-white hover:bg-red-600"
+                  : "bg-transparent text-gray-500 border border-gray-700 hover:border-red-500 hover:text-red-500"
+              }`}
+            >
+              {isBlocked ? "已封鎖" : "封鎖"}
             </button>
           </div>
         )}

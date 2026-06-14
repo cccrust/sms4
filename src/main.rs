@@ -31,6 +31,9 @@ async fn main() -> Result<()> {
         cli::Commands::Auth(cmd) => {
             cli::auth::run(&conn, &cmd.subcommand)?;
         }
+        cli::Commands::Block(cmd) => {
+            cli::block::run(&conn, &cmd.subcommand)?;
+        }
         cli::Commands::User(cmd) => {
             cli::user::run(&conn, &cmd.subcommand)?;
         }

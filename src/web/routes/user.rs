@@ -9,6 +9,12 @@ use serde_json::json;
 #[derive(Deserialize)]
 pub struct ListParams {
     search: Option<String>,
+    current_user_id: Option<i64>,
+}
+
+#[derive(Deserialize)]
+pub struct GetParams {
+    current_user_id: Option<i64>,
 }
 
 #[derive(Deserialize)]
@@ -42,16 +48,18 @@ pub async fn list(
     Query(params): Query<ListParams>,
 ) -> Result<Json<Vec<user::User>>, AppError> {
     let conn = state.conn.lock().unwrap();
-    let users = user::list_users(&conn, params.search.as_deref())?;
+    let users = user::list_users(&conn, params.search.as_deref(), params.current_user_id)?;
     Ok(Json(users))
 }
 
 pub async fn get(
     State(state): State<AppState>,
     Path(id): Path<i64>,
+    Query(params): Query<GetParams>,
 ) -> Result<Json<UserDetail>, AppError> {
     let conn = state.conn.lock().unwrap();
-    let u = user::get_user(&conn, id)?.ok_or_else(|| AppError::NotFound(format!("使用者 #{} 不存在", id)))?;
+    let u = user::get_user_visible(&conn, id, params.current_user_id)?
+        .ok_or_else(|| AppError::NotFound(format!("使用者 #{} 不存在", id)))?;
     let followers = user::get_followers_count(&conn, id)?;
     let following = user::get_following_count(&conn, id)?;
     Ok(Json(UserDetail {

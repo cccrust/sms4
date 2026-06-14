@@ -21,7 +21,7 @@ export default function Conversation() {
       try {
         const msgsData = await api.messages.messages(userId, parseInt(otherId));
         setMsgs(msgsData);
-        const u = await api.users.get(parseInt(otherId));
+        const u = await api.users.get(parseInt(otherId), userId);
         setOtherUser(u);
       } catch {
         // ignore

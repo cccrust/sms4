@@ -45,9 +45,10 @@ export const api = {
       }),
   },
   users: {
-    list: (params?: Record<string, string>) =>
-      request<import("../types").User[]>(`/users?${new URLSearchParams(params)}`),
-    get: (id: number) => request<import("../types").UserDetail>(`/users/${id}`),
+    list: (params?: Record<string, string>, currentUserId?: number) =>
+      request<import("../types").User[]>(`/users?${new URLSearchParams({ ...params, ...(currentUserId ? { current_user_id: String(currentUserId) } : {}) })}`),
+    get: (id: number, currentUserId?: number) =>
+      request<import("../types").UserDetail>(`/users/${id}?${currentUserId ? `current_user_id=${currentUserId}` : ''}`),
     create: (data: { username: string; display_name: string; bio?: string }) =>
       request<import("../types").User>("/users", {
         method: "POST",
@@ -130,6 +131,22 @@ export const api = {
       }),
     list: (userId: number) =>
       request<{ interests: import("../types").Interest[] }>(`/interests/${userId}`),
+  },
+  block: {
+    add: (blocker_id: number, blocked_id: number) =>
+      request<{ message: string }>("/block", {
+        method: "POST",
+        body: JSON.stringify({ blocker_id, blocked_id }),
+      }),
+    remove: (blocker_id: number, blocked_id: number) =>
+      request<{ message: string }>("/block", {
+        method: "DELETE",
+        body: JSON.stringify({ blocker_id, blocked_id }),
+      }),
+    list: (userId: number) =>
+      request<import("../types").UserBrief[]>(`/block/${userId}`),
+    check: (userId: number, otherId: number) =>
+      request<{ blocked: boolean }>(`/block/${userId}/${otherId}`),
   },
   likes: {
     add: (user_id: number, post_id: number) =>

@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod block;
 pub mod follow;
 pub mod interest;
 pub mod like;
@@ -15,6 +16,9 @@ pub fn build_routes() -> Router<crate::web::AppState> {
         .route("/auth/register", post(auth::register))
         .route("/auth/login", post(auth::login))
         .route("/auth/logout", post(auth::logout))
+        .route("/block", post(block::block).delete(block::unblock))
+        .route("/block/{user_id}", get(block::list))
+        .route("/block/{user_id}/{other_id}", get(block::check))
         .route("/users", get(user::list).post(user::create))
         .route(
             "/users/{id}",

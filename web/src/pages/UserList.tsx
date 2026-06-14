@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { api } from "../api/client";
+import { useAuth } from "../contexts/AuthContext";
 import type { User } from "../types";
 import UserCard from "../components/UserCard";
 
 export default function UserList() {
+  const { user: authUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -14,7 +16,7 @@ export default function UserList() {
       try {
         const params: Record<string, string> = {};
         if (search) params.search = search;
-        const data = await api.users.list(params);
+        const data = await api.users.list(params, authUser?.id);
         setUsers(data);
       } catch {
         // ignore
@@ -23,7 +25,7 @@ export default function UserList() {
       }
     };
     fetchUsers();
-  }, [search]);
+  }, [search, authUser]);
 
   return (
     <div>

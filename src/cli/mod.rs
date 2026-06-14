@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
 pub mod auth;
+pub mod block;
 pub mod fmt;
 pub mod follow;
 pub mod interest;
@@ -11,6 +12,7 @@ pub mod profile;
 pub mod user;
 
 pub use auth::AuthCommand;
+pub use block::BlockCommand;
 pub use follow::FollowCommand;
 pub use interest::InterestCommand;
 pub use like::LikeCommand;
@@ -30,6 +32,7 @@ pub struct Cli {
 pub enum Commands {
     Init,
     Auth(AuthCommand),
+    Block(BlockCommand),
     User(UserCommand),
     Post(PostCommand),
     Follow(FollowCommand),

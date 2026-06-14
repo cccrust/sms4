@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod block;
 pub mod user;
 pub mod post;
 pub mod follow;

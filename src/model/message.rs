@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use rusqlite::{params, Connection};
 use serde::Serialize;
 
@@ -37,6 +37,9 @@ pub struct Conversation {
 }
 
 pub fn send_message(conn: &Connection, sender_id: i64, receiver_id: i64, content: &str) -> Result<i64> {
+    if crate::model::block::either_blocked(conn, sender_id, receiver_id)? {
+        bail!("無法傳送訊息：對方已封鎖你或你已封鎖對方");
+    }
     conn.execute(
         "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?1, ?2, ?3)",
         params![sender_id, receiver_id, content],
@@ -66,6 +69,11 @@ pub fn list_conversations(conn: &Connection, user_id: i64) -> Result<Vec<Convers
             WHERE receiver_id = ?1 AND read = 0
             GROUP BY sender_id
         ) unr ON unr.sid = latest.other_id
+        WHERE latest.other_id NOT IN (
+            SELECT blocked_id FROM blocks WHERE blocker_id = ?1
+        ) AND latest.other_id NOT IN (
+            SELECT blocker_id FROM blocks WHERE blocked_id = ?1
+        )
         ORDER BY m.created_at DESC"
     )?;
     let rows = stmt.query_map(params![user_id], |row| {
@@ -86,6 +94,9 @@ pub fn list_conversations(conn: &Connection, user_id: i64) -> Result<Vec<Convers
 }
 
 pub fn list_messages(conn: &Connection, user_id: i64, other_id: i64) -> Result<Vec<MessageWithUser>> {
+    if crate::model::block::either_blocked(conn, user_id, other_id)? {
+        return Ok(Vec::new());
+    }
     let mut stmt = conn.prepare(
         "SELECT m.id, m.sender_id, m.receiver_id, m.content, m.read, m.created_at,
                 su.username, su.display_name, ru.username, ru.display_name

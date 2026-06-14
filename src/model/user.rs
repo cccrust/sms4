@@ -13,6 +13,13 @@ pub struct User {
     pub updated_at: String,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct UserBrief {
+    pub id: i64,
+    pub username: String,
+    pub display_name: String,
+}
+
 pub fn create_user(conn: &Connection, username: &str, display_name: &str, bio: Option<&str>, password: Option<&str>) -> Result<i64> {
     conn.execute(
         "INSERT INTO users (username, display_name, bio) VALUES (?1, ?2, ?3)",
@@ -26,13 +33,21 @@ pub fn create_user(conn: &Connection, username: &str, display_name: &str, bio: O
     Ok(id)
 }
 
-pub fn list_users(conn: &Connection, search: Option<&str>) -> Result<Vec<User>> {
+pub fn list_users(conn: &Connection, search: Option<&str>, current_user: Option<i64>) -> Result<Vec<User>> {
     let mut sql = "SELECT id, username, display_name, bio, avatar, created_at, updated_at FROM users WHERE 1=1".to_string();
     let mut args: Vec<Box<dyn rusqlite::types::ToSql>> = Vec::new();
     if let Some(s) = search {
         let idx = args.len() + 1;
         sql.push_str(&format!(" AND (username LIKE ?{} OR display_name LIKE ?{})", idx, idx));
         args.push(Box::new(format!("%{}%", s)));
+    }
+    if let Some(uid) = current_user {
+        let idx = args.len() + 1;
+        sql.push_str(&format!(
+            " AND id NOT IN (SELECT blocker_id FROM blocks WHERE blocked_id = ?{})",
+            idx
+        ));
+        args.push(Box::new(uid));
     }
     sql.push_str(" ORDER BY id");
     let mut stmt = conn.prepare(&sql)?;
@@ -72,6 +87,15 @@ pub fn get_user(conn: &Connection, id: i64) -> Result<Option<User>> {
         Some(Ok(u)) => Ok(Some(u)),
         _ => Ok(None),
     }
+}
+
+pub fn get_user_visible(conn: &Connection, id: i64, current_user: Option<i64>) -> Result<Option<User>> {
+    if let Some(uid) = current_user {
+        if crate::model::block::is_blocked(conn, id, uid)? {
+            return Ok(None);
+        }
+    }
+    get_user(conn, id)
 }
 
 pub fn update_user(conn: &Connection, id: i64, display_name: Option<&str>, bio: Option<&str>) -> Result<bool> {
@@ -128,9 +152,9 @@ mod tests {
         let c = conn();
         create_user(&c, "alice", "Alice", None, None).unwrap();
         create_user(&c, "bob", "Bob", None, None).unwrap();
-        let res = list_users(&c, Some("alice")).unwrap();
+        let res = list_users(&c, Some("alice"), None).unwrap();
         assert_eq!(res.len(), 1);
-        let res = list_users(&c, None).unwrap();
+        let res = list_users(&c, None, None).unwrap();
         assert_eq!(res.len(), 2);
     }
 

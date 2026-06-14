@@ -85,3 +85,16 @@ CREATE TABLE IF NOT EXISTS interests (
 
 CREATE INDEX IF NOT EXISTS idx_interests_tag ON interests(tag);
 CREATE INDEX IF NOT EXISTS idx_interests_user ON interests(user_id);
+
+CREATE TABLE IF NOT EXISTS blocks (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    blocker_id INTEGER NOT NULL,
+    blocked_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (blocker_id) REFERENCES users(id),
+    FOREIGN KEY (blocked_id) REFERENCES users(id),
+    UNIQUE(blocker_id, blocked_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_blocks_blocker ON blocks(blocker_id);
+CREATE INDEX IF NOT EXISTS idx_blocks_blocked ON blocks(blocked_id);
