@@ -32,13 +32,13 @@ export default function Marketplace() {
     fetchProducts();
   }, [q, minPrice, maxPrice]);
 
-  const buy = async (productId: number) => {
+  const addToCart = async (productId: number) => {
     if (!user) return;
     try {
-      await api.orders.create(user.id, productId);
-      alert("訂單已建立！");
+      await api.cart.add(user.id, productId);
+      alert("已加入購物車");
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : "下單失敗");
+      alert(e instanceof Error ? e.message : "加入購物車失敗");
     }
   };
 
@@ -118,11 +118,11 @@ export default function Marketplace() {
                     </button>
                   )}
                   <button
-                    onClick={() => buy(p.id)}
+                    onClick={() => addToCart(p.id)}
                     disabled={p.stock <= 0}
                     className="px-4 py-1.5 rounded-full text-sm font-bold bg-white text-black hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    購買
+                    加入購物車
                   </button>
                 </div>
               </div>

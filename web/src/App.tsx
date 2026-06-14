@@ -19,6 +19,7 @@ import ShopPage from "./pages/ShopPage";
 import Orders from "./pages/Orders";
 import ShopMessages from "./pages/ShopMessages";
 import ShopMessageList from "./pages/ShopMessageList";
+import CartPage from "./pages/CartPage";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
               <Route path="orders" element={<Orders />} />
               <Route path="shop-messages" element={<ShopMessageList />} />
               <Route path="shop-messages/:shopId" element={<ShopMessages />} />
+              <Route path="cart" element={<CartPage />} />
             </Route>
           </Route>
         </Routes>

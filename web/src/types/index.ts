@@ -109,6 +109,20 @@ export interface ShopMessageWithUser {
   created_at: string;
 }
 
+export interface CartItemWithDetails {
+  id: number;
+  user_id: number;
+  product_id: number;
+  product_name: string;
+  price: number;
+  stock: number;
+  quantity: number;
+  total_price: number;
+  shop_id: number;
+  shop_name: string;
+  created_at: string;
+}
+
 export interface ShopConversation {
   shop_id: number;
   shop_name: string;

@@ -147,3 +147,14 @@ CREATE TABLE IF NOT EXISTS shop_messages (
 
 CREATE INDEX IF NOT EXISTS idx_shop_messages_shop ON shop_messages(shop_id);
 CREATE INDEX IF NOT EXISTS idx_shop_messages_users ON shop_messages(sender_id, receiver_id);
+
+CREATE TABLE IF NOT EXISTS cart_items (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    product_id  INTEGER NOT NULL REFERENCES products(id),
+    quantity    INTEGER NOT NULL DEFAULT 1,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(user_id, product_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_cart_items_user ON cart_items(user_id);

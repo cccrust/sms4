@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod block;
+pub mod cart;
 pub mod follow;
 pub mod interest;
 pub mod like;
@@ -54,6 +55,10 @@ pub fn build_routes() -> Router<crate::web::AppState> {
         .route("/products/{id}/update", put(product::update))
         .route("/orders", post(order::create).get(order::list))
         .route("/orders/{id}", get(order::get))
+        .route("/cart", post(cart::add).get(cart::list))
+        .route("/cart/count", get(cart::count))
+        .route("/cart/{id}", delete(cart::remove).put(cart::update_quantity))
+        .route("/cart/checkout", post(cart::checkout))
         .route("/shop-messages/send", post(shop_message::send))
         .route("/shop-messages/{shop_id}", get(shop_message::list))
         .route("/shop-messages/conversations", get(shop_message::conversations))

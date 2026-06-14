@@ -204,6 +204,32 @@ export const api = {
     search: (params?: Record<string, string>) =>
       request<import("../types").ProductWithShop[]>(`/products/search?${new URLSearchParams(params)}`),
   },
+  cart: {
+    add: (userId: number, productId: number, quantity?: number) =>
+      request<{ cart_item: import("../types").CartItemWithDetails }>("/cart", {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId, product_id: productId, quantity: quantity ?? 1 }),
+      }),
+    list: (userId: number) =>
+      request<import("../types").CartItemWithDetails[]>(`/cart?user_id=${userId}`),
+    remove: (id: number, userId: number) =>
+      request<{ removed: boolean }>(`/cart/${id}`, {
+        method: "DELETE",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+    updateQuantity: (id: number, userId: number, quantity: number) =>
+      request<{ updated: boolean }>(`/cart/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ user_id: userId, quantity }),
+      }),
+    checkout: (userId: number) =>
+      request<{ order_ids: number[] }>("/cart/checkout", {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+    count: (userId: number) =>
+      request<{ count: number }>(`/cart/count?user_id=${userId}`),
+  },
   shopMessages: {
     send: (senderId: number, receiverId: number, shopId: number, content: string) =>
       request<import("../types").ShopMessageWithUser>("/shop-messages/send", {

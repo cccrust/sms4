@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { api } from "../api/client";
 
 const navItems = [
   { label: "首頁", to: "/", icon: "🏠" },
@@ -11,6 +13,16 @@ const navItems = [
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    api.cart.count(user.id).then((d) => setCartCount(d.count)).catch(() => {});
+    const timer = setInterval(() => {
+      api.cart.count(user.id).then((d) => setCartCount(d.count)).catch(() => {});
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [user]);
 
   return (
     <div className="h-full flex flex-col max-w-lg mx-auto bg-black">
@@ -21,6 +33,9 @@ export default function Layout() {
             <div className="flex items-center gap-3">
               <NavLink to="/my-shop" className="text-xs text-gray-500 hover:text-white transition">
                 我的商店
+              </NavLink>
+              <NavLink to="/cart" className="text-xs text-gray-500 hover:text-white transition relative">
+                購物車{cartCount > 0 && <span className="ml-1 text-blue-400 font-bold">({cartCount})</span>}
               </NavLink>
               <NavLink to="/orders" className="text-xs text-gray-500 hover:text-white transition">
                 訂單
