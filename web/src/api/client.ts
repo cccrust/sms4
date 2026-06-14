@@ -1,10 +1,23 @@
 const BASE = "/api";
 
+let _token: string | null = null;
+
+export function setToken(t: string | null) {
+  _token = t;
+}
+
+export function getToken(): string | null {
+  return _token;
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options?.headers as Record<string, string>),
   };
+  if (_token) {
+    headers["Authorization"] = `Bearer ${_token}`;
+  }
   const res = await fetch(`${BASE}${path}`, { ...options, headers });
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));
@@ -14,6 +27,23 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  auth: {
+    login: (username: string, password: string) =>
+      request<import("../types/auth").AuthResponse>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+      }),
+    register: (username: string, password: string, display_name?: string) =>
+      request<import("../types/auth").RegisterResponse>("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ username, password, display_name }),
+      }),
+    logout: (token: string) =>
+      request<{ message: string }>("/auth/logout", {
+        method: "POST",
+        body: JSON.stringify({ token }),
+      }),
+  },
   users: {
     list: (params?: Record<string, string>) =>
       request<import("../types").User[]>(`/users?${new URLSearchParams(params)}`),

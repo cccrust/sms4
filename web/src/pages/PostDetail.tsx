@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { useAuth } from "../contexts/AuthContext";
 import type { PostDetail as PostDetailType } from "../types";
 import PostCard from "../components/PostCard";
 import PostForm from "../components/PostForm";
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState<PostDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const fetchPost = async () => {
     if (!id) return;
@@ -26,31 +27,22 @@ export default function PostDetail() {
   };
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        const users = await api.users.list();
-        if (users.length > 0) setCurrentUserId(users[0].id);
-      } catch {
-        // ignore
-      }
-      await fetchPost();
-    };
-    init();
+    fetchPost();
   }, [id]);
 
   const handleReply = async (content: string) => {
-    if (!id || currentUserId == null) return;
-    await api.posts.reply(parseInt(id), { user_id: currentUserId, content });
+    if (!id || !user) return;
+    await api.posts.reply(parseInt(id), { user_id: user.id, content });
     await fetchPost();
   };
 
   const handleLike = async (postId: number) => {
-    if (currentUserId == null) return;
+    if (!user) return;
     if (likedPosts.has(postId)) {
-      await api.likes.remove(currentUserId, postId);
+      await api.likes.remove(user.id, postId);
       setLikedPosts((prev) => { const n = new Set(prev); n.delete(postId); return n; });
     } else {
-      await api.likes.add(currentUserId, postId);
+      await api.likes.add(user.id, postId);
       setLikedPosts((prev) => { const n = new Set(prev); n.add(postId); return n; });
     }
     await fetchPost();

@@ -1,30 +1,28 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { useAuth } from "../contexts/AuthContext";
 import type { MessageWithUser } from "../types";
 
 export default function Conversation() {
   const { otherId } = useParams<{ otherId: string }>();
-  const [searchParams] = useSearchParams();
+  const { user: authUser } = useAuth();
   const navigate = useNavigate();
   const [msgs, setMsgs] = useState<MessageWithUser[]>([]);
   const [otherUser, setOtherUser] = useState<{ id: number; username: string; display_name: string } | null>(null);
   const [content, setContent] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const userId = parseInt(searchParams.get("uid") || "0");
+  const userId = authUser?.id ?? 0;
 
   useEffect(() => {
     if (!otherId || !userId) return;
     const fetch = async () => {
       try {
-        const [msgsData, users] = await Promise.all([
-          api.messages.messages(userId, parseInt(otherId)),
-          api.users.list(),
-        ]);
+        const msgsData = await api.messages.messages(userId, parseInt(otherId));
         setMsgs(msgsData);
-        const other = users.find((u) => u.id === parseInt(otherId));
-        if (other) setOtherUser(other);
+        const u = await api.users.get(parseInt(otherId));
+        setOtherUser(u);
       } catch {
         // ignore
       }

@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const navItems = [
   { label: "首頁", to: "/", icon: "🏠" },
@@ -8,10 +9,27 @@ const navItems = [
 ];
 
 export default function Layout() {
+  const { user, logout } = useAuth();
+
   return (
     <div className="h-full flex flex-col max-w-lg mx-auto bg-black">
       <header className="sticky top-0 z-10 bg-black/80 backdrop-blur border-b border-gray-800 px-4 py-3">
-        <h1 className="text-xl font-bold text-white text-center">SMS4</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-white">SMS4</h1>
+          {user && (
+            <div className="flex items-center gap-3">
+              <NavLink to={`/users/${user.id}`} className="text-sm text-gray-400 hover:text-white transition">
+                @{user.username}
+              </NavLink>
+              <button
+                onClick={logout}
+                className="text-xs text-gray-500 hover:text-red-400 transition"
+              >
+                登出
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
       <main className="flex-1 overflow-y-auto">

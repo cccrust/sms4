@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { useAuth } from "../contexts/AuthContext";
 import type { UserDetail as UserDetailType, PostWithUser, UserBrief } from "../types";
 import PostCard from "../components/PostCard";
 
 export default function UserDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user: authUser } = useAuth();
   const navigate = useNavigate();
   const [user, setUser] = useState<UserDetailType | null>(null);
   const [posts, setPosts] = useState<PostWithUser[]>([]);
@@ -15,7 +17,6 @@ export default function UserDetail() {
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
@@ -24,14 +25,8 @@ export default function UserDetail() {
       setLoading(true);
       try {
         const uid = parseInt(id);
-        const [userData, usersList] = await Promise.all([
-          api.users.get(uid),
-          api.users.list(),
-        ]);
+        const userData = await api.users.get(uid);
         setUser(userData);
-        if (usersList.length > 0) {
-          setCurrentUserId(usersList[0].id);
-        }
 
         const [postsData, followersData, followingData] = await Promise.all([
           api.posts.list({ user_id: id }),
@@ -42,9 +37,8 @@ export default function UserDetail() {
         setFollowers(followersData);
         setFollowing(followingData);
 
-        if (usersList.length > 0) {
-          const me = usersList[0].id;
-          setIsFollowing(followersData.some((f) => f.id === me));
+        if (authUser) {
+          setIsFollowing(followersData.some((f) => f.id === authUser.id));
         }
       } catch {
         // ignore
@@ -53,29 +47,29 @@ export default function UserDetail() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, authUser]);
 
   const handleFollow = async () => {
-    if (currentUserId == null || !user) return;
+    if (!authUser || !user) return;
     if (isFollowing) {
-      await api.follow.remove(currentUserId, user.id);
+      await api.follow.remove(authUser.id, user.id);
       setIsFollowing(false);
       setUser({ ...user, followers_count: user.followers_count - 1 });
     } else {
-      await api.follow.add(currentUserId, user.id);
+      await api.follow.add(authUser.id, user.id);
       setIsFollowing(true);
       setUser({ ...user, followers_count: user.followers_count + 1 });
     }
   };
 
   const handleLike = async (postId: number) => {
-    if (currentUserId == null) return;
+    if (!authUser) return;
     if (likedPosts.has(postId)) {
-      await api.likes.remove(currentUserId, postId);
+      await api.likes.remove(authUser.id, postId);
       setLikedPosts((prev) => { const n = new Set(prev); n.delete(postId); return n; });
       setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, likes_count: p.likes_count - 1 } : p));
     } else {
-      await api.likes.add(currentUserId, postId);
+      await api.likes.add(authUser.id, postId);
       setLikedPosts((prev) => { const n = new Set(prev); n.add(postId); return n; });
       setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, likes_count: p.likes_count + 1 } : p));
     }
@@ -106,10 +100,10 @@ export default function UserDetail() {
             <h2 className="text-xl font-bold text-white">{user.display_name}</h2>
             <p className="text-sm text-gray-500">@{user.username}</p>
           </div>
-          {currentUserId && currentUserId !== user.id && (
+          {authUser && authUser.id !== user.id && (
             <div className="flex items-center gap-2">
               <button
-                onClick={() => navigate(`/messages/${user.id}?uid=${currentUserId}`)}
+                onClick={() => navigate(`/messages/${user.id}?uid=${authUser.id}`)}
                 className="shrink-0 px-4 py-1.5 rounded-full text-sm font-bold bg-blue-500 text-white hover:bg-blue-600 transition"
               >
                 傳送訊息

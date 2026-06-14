@@ -1,29 +1,26 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { useAuth } from "../contexts/AuthContext";
 import type { Conversation } from "../types";
 
 export default function Messages() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [convs, setConvs] = useState<Conversation[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     const init = async () => {
+      if (!user) return;
       try {
-        const userList = await api.users.list();
-        if (userList.length > 0) {
-          const uid = userList[0].id;
-          setCurrentUserId(uid);
-          const [convsData, unreadData] = await Promise.all([
-            api.messages.conversations(uid),
-            api.messages.unread(uid),
-          ]);
-          setConvs(convsData);
-          setUnread(unreadData.unread);
-        }
+        const [convsData, unreadData] = await Promise.all([
+          api.messages.conversations(user.id),
+          api.messages.unread(user.id),
+        ]);
+        setConvs(convsData);
+        setUnread(unreadData.unread);
       } catch {
         // ignore
       } finally {
@@ -31,10 +28,11 @@ export default function Messages() {
       }
     };
     init();
-  }, []);
+  }, [user]);
 
   const startConversation = (otherId: number) => {
-    navigate(`/messages/${otherId}?uid=${currentUserId}`);
+    if (!user) return;
+    navigate(`/messages/${otherId}?uid=${user.id}`);
   };
 
   if (loading) {

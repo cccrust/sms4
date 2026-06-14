@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { api } from "../api/client";
-import type { PostWithUser, User } from "../types";
+import type { PostWithUser } from "../types";
+import { useAuth } from "../contexts/AuthContext";
 import PostCard from "../components/PostCard";
 import PostForm from "../components/PostForm";
 
 export default function Timeline() {
+  const { user } = useAuth();
   const [posts, setPosts] = useState<PostWithUser[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
 
@@ -23,35 +23,23 @@ export default function Timeline() {
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        const userList = await api.users.list();
-        setUsers(userList);
-        if (userList.length > 0) {
-          setCurrentUserId(userList[0].id);
-        }
-      } catch {
-        // ignore
-      }
-      await fetchPosts();
-    };
-    init();
+    fetchPosts();
   }, [fetchPosts]);
 
   const handlePost = async (content: string) => {
-    if (currentUserId == null) return;
-    const newPost = await api.posts.create({ user_id: currentUserId, content });
+    if (!user) return;
+    const newPost = await api.posts.create({ user_id: user.id, content });
     setPosts((prev) => [newPost, ...prev]);
   };
 
   const handleLike = async (postId: number) => {
-    if (currentUserId == null) return;
+    if (!user) return;
     if (likedPosts.has(postId)) {
-      await api.likes.remove(currentUserId, postId);
+      await api.likes.remove(user.id, postId);
       setLikedPosts((prev) => { const n = new Set(prev); n.delete(postId); return n; });
       setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, likes_count: p.likes_count - 1 } : p));
     } else {
-      await api.likes.add(currentUserId, postId);
+      await api.likes.add(user.id, postId);
       setLikedPosts((prev) => { const n = new Set(prev); n.add(postId); return n; });
       setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, likes_count: p.likes_count + 1 } : p));
     }
@@ -72,26 +60,9 @@ export default function Timeline() {
   return (
     <div>
       <PostForm onSubmit={handlePost} />
-      {currentUserId != null && (
+      {user && (
         <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-800">
-          以 @{users.find((u) => u.id === currentUserId)?.username ?? "?"} 發布
-        </div>
-      )}
-      {users.length > 1 && (
-        <div className="flex gap-2 px-4 py-2 border-b border-gray-800 overflow-x-auto">
-          {users.map((u) => (
-            <button
-              key={u.id}
-              onClick={() => setCurrentUserId(u.id)}
-              className={`shrink-0 text-xs px-3 py-1 rounded-full border transition ${
-                currentUserId === u.id
-                  ? "bg-white text-black border-white"
-                  : "bg-transparent text-gray-400 border-gray-700 hover:border-gray-500"
-              }`}
-            >
-              @{u.username}
-            </button>
-          ))}
+          以 @{user.username} 發布
         </div>
       )}
       {posts.length === 0 ? (
