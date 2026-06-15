@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { PostWithUser } from "../types";
+import PostContent from "./PostContent";
 
 interface Props {
   post: PostWithUser;
@@ -39,7 +40,7 @@ export default function PostCard({ post, showThread, onLike, onReply, liked }: P
             className="mt-1 text-[15px] leading-relaxed text-white cursor-pointer"
             onClick={() => navigate(`/posts/${post.id}`)}
           >
-            {post.content}
+            <PostContent content={post.content} />
           </div>
           <div className="flex items-center gap-6 mt-3 text-gray-500">
             <button

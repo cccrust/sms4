@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuth } from "../contexts/AuthContext";
 import type { Group, GroupPostWithUser, GroupMemberBrief } from "../types";
+import PostContent from "../components/PostContent";
 
 export default function GroupDetail() {
   const { id } = useParams();
@@ -149,7 +150,7 @@ export default function GroupDetail() {
                   <span className="text-xs text-gray-500">@{p.username}</span>
                   <span className="text-xs text-gray-600">{new Date(p.created_at).toLocaleDateString("zh-TW")}</span>
                 </div>
-                <p className="text-white text-[15px]">{p.content}</p>
+                <div className="text-white text-[15px]"><PostContent content={p.content} /></div>
                 <div className="flex items-center gap-3 mt-2">
                   <span className="text-xs text-gray-500">{p.likes_count} 讚</span>
                   {(user?.id === p.user_id || isOwner) && (
