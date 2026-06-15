@@ -20,6 +20,8 @@ import Orders from "./pages/Orders";
 import ShopMessages from "./pages/ShopMessages";
 import ShopMessageList from "./pages/ShopMessageList";
 import CartPage from "./pages/CartPage";
+import GroupList from "./pages/GroupList";
+import GroupDetail from "./pages/GroupDetail";
 
 export default function App() {
   return (
@@ -46,6 +48,8 @@ export default function App() {
               <Route path="shop-messages" element={<ShopMessageList />} />
               <Route path="shop-messages/:shopId" element={<ShopMessages />} />
               <Route path="cart" element={<CartPage />} />
+              <Route path="groups" element={<GroupList />} />
+              <Route path="groups/:id" element={<GroupDetail />} />
             </Route>
           </Route>
         </Routes>

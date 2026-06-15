@@ -4,6 +4,7 @@ pub mod auth;
 pub mod block;
 pub mod fmt;
 pub mod follow;
+pub mod group;
 pub mod interest;
 pub mod like;
 pub mod message;
@@ -17,6 +18,7 @@ pub mod user;
 pub use auth::AuthCommand;
 pub use block::BlockCommand;
 pub use follow::FollowCommand;
+pub use group::GroupCommand;
 pub use interest::InterestCommand;
 pub use like::LikeCommand;
 pub use message::MessageCommand;
@@ -50,6 +52,7 @@ pub enum Commands {
     Shop(ShopCommand),
     Product(ProductCommand),
     Order(OrderCommand),
+    Group(GroupCommand),
     Web {
         #[arg(long, default_value_t = 8080)]
         port: u16,

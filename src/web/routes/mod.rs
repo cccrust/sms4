@@ -2,6 +2,7 @@ pub mod auth;
 pub mod block;
 pub mod cart;
 pub mod follow;
+pub mod group;
 pub mod interest;
 pub mod like;
 pub mod message;
@@ -62,4 +63,12 @@ pub fn build_routes() -> Router<crate::web::AppState> {
         .route("/shop-messages/send", post(shop_message::send))
         .route("/shop-messages/{shop_id}", get(shop_message::list))
         .route("/shop-messages/conversations", get(shop_message::conversations))
+        .route("/groups", post(group::create).get(group::list))
+        .route("/groups/mine", get(group::mine))
+        .route("/groups/{id}", get(group::get).put(group::update).delete(group::delete))
+        .route("/groups/{id}/join", post(group::join))
+        .route("/groups/{id}/leave", post(group::leave))
+        .route("/groups/{id}/members", get(group::members))
+        .route("/groups/{id}/posts", post(group::add_post).get(group::list_posts))
+        .route("/groups/{id}/posts/{post_id}", delete(group::delete_post))
 }

@@ -230,6 +230,53 @@ export const api = {
     count: (userId: number) =>
       request<{ count: number }>(`/cart/count?user_id=${userId}`),
   },
+  groups: {
+    create: (userId: number, name: string, description?: string) =>
+      request<import("../types").Group>("/groups", {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId, name, description }),
+      }),
+    list: (search?: string) =>
+      request<import("../types").GroupWithOwner[]>(`/groups${search ? `?search=${encodeURIComponent(search)}` : ""}`),
+    mine: (userId: number) =>
+      request<import("../types").GroupWithOwner[]>(`/groups/mine?user_id=${userId}`),
+    get: (id: number) =>
+      request<import("../types").Group>(`/groups/${id}`),
+    update: (id: number, userId: number, data: { name?: string; description?: string }) =>
+      request<import("../types").Group>(`/groups/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ user_id: userId, ...data }),
+      }),
+    delete: (id: number, userId: number) =>
+      request<{ deleted: boolean }>(`/groups/${id}`, {
+        method: "DELETE",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+    join: (groupId: number, userId: number) =>
+      request<{ joined: boolean }>(`/groups/${groupId}/join`, {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+    leave: (groupId: number, userId: number) =>
+      request<{ left: boolean }>(`/groups/${groupId}/leave`, {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+    members: (groupId: number) =>
+      request<import("../types").GroupMemberBrief[]>(`/groups/${groupId}/members`),
+    addPost: (groupId: number, userId: number, content: string) =>
+      request<{ post: import("../types").GroupPostWithUser }>(`/groups/${groupId}/posts`, {
+        method: "POST",
+        body: JSON.stringify({ user_id: userId, content }),
+      }),
+    listPosts: (groupId: number) =>
+      request<import("../types").GroupPostWithUser[]>(`/groups/${groupId}/posts`),
+    deletePost: (groupId: number, postId: number, userId: number) =>
+      request<{ deleted: boolean }>(`/groups/${groupId}/posts/${postId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ user_id: userId }),
+      }),
+  },
   shopMessages: {
     send: (senderId: number, receiverId: number, shopId: number, content: string) =>
       request<import("../types").ShopMessageWithUser>("/shop-messages/send", {

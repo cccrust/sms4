@@ -1,6 +1,8 @@
 pub mod auth;
 pub mod block;
 pub mod cart;
+pub mod group;
+pub mod group_post;
 pub mod user;
 pub mod post;
 pub mod follow;

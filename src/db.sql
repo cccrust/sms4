@@ -158,3 +158,37 @@ CREATE TABLE IF NOT EXISTS cart_items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_cart_items_user ON cart_items(user_id);
+
+CREATE TABLE IF NOT EXISTS groups (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    name         TEXT NOT NULL,
+    description  TEXT,
+    owner_id     INTEGER NOT NULL REFERENCES users(id),
+    member_count INTEGER NOT NULL DEFAULT 1,
+    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS group_members (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id   INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role       TEXT NOT NULL DEFAULT 'member',
+    joined_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(group_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_group_members_group ON group_members(group_id);
+CREATE INDEX IF NOT EXISTS idx_group_members_user ON group_members(user_id);
+
+CREATE TABLE IF NOT EXISTS group_posts (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id    INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    content     TEXT NOT NULL,
+    likes_count INTEGER NOT NULL DEFAULT 0,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_group_posts_group ON group_posts(group_id);

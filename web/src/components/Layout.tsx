@@ -5,6 +5,7 @@ import { api } from "../api/client";
 
 const navItems = [
   { label: "首頁", to: "/", icon: "🏠" },
+  { label: "社團", to: "/groups", icon: "👥" },
   { label: "配對", to: "/search", icon: "🔍" },
   { label: "商場", to: "/marketplace", icon: "🛒" },
   { label: "私訊", to: "/messages", icon: "✉️" },
@@ -68,11 +69,11 @@ export default function Layout() {
               key={item.to}
               to={item.to}
               end={item.to === "/"}
-              className={({ isActive }) =>
-                `flex flex-col items-center px-6 py-1 text-xs transition ${
-                  isActive ? "text-white" : "text-gray-500"
-                }`
-              }
+               className={({ isActive }) =>
+                 `flex flex-col items-center px-3 py-1 text-xs transition ${
+                   isActive ? "text-white" : "text-gray-500"
+                 }`
+               }
             >
               <span className="text-xl mb-0.5">{item.icon}</span>
               <span>{item.label}</span>

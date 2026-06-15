@@ -109,6 +109,45 @@ export interface ShopMessageWithUser {
   created_at: string;
 }
 
+export interface Group {
+  id: number;
+  name: string;
+  description: string | null;
+  owner_id: number;
+  member_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GroupWithOwner {
+  id: number;
+  name: string;
+  description: string | null;
+  owner_id: number;
+  owner_username: string;
+  owner_display_name: string;
+  member_count: number;
+  created_at: string;
+}
+
+export interface GroupMemberBrief {
+  user_id: number;
+  username: string;
+  display_name: string;
+  role: string;
+}
+
+export interface GroupPostWithUser {
+  id: number;
+  group_id: number;
+  user_id: number;
+  username: string;
+  display_name: string;
+  content: string;
+  likes_count: number;
+  created_at: string;
+}
+
 export interface CartItemWithDetails {
   id: number;
   user_id: number;

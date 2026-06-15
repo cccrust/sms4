@@ -222,6 +222,54 @@ SMS4_DB="$DB" $SMS4 product add 5 "皮革鑰匙圈 DIY 材料包" 250 --stock 40
 SMS4_DB="$DB" $SMS4 product add 5 "帆布托特包 手作限定" 880 --stock 15 --description "內層加厚，可放 15 吋筆電"
 
 echo ""
+echo "=== 10. 社團 ==="
+# Alice 開 2 個社團
+SMS4_DB="$DB" $SMS4 group create 1 "攝影同好會" --description "歡迎喜歡攝影的朋友一起交流作品、分享器材心得"
+SMS4_DB="$DB" $SMS4 group create 1 "登山健行團" --description "週末一起爬山去！北台灣步道為主"
+# Alice 的社團加入其他人
+SMS4_DB="$DB" $SMS4 group join 1 2
+SMS4_DB="$DB" $SMS4 group join 1 3
+SMS4_DB="$DB" $SMS4 group join 1 5
+SMS4_DB="$DB" $SMS4 group join 2 4
+SMS4_DB="$DB" $SMS4 group join 2 6
+SMS4_DB="$DB" $SMS4 group join 2 7
+SMS4_DB="$DB" $SMS4 group join 2 8
+# Bob 開 1 個社團（只有自己）
+SMS4_DB="$DB" $SMS4 group create 2 "Rust Taiwan" --description "Rust 程式語言台灣社群，討論 Rust 開發大小事"
+# Carol 開 1 個社團
+SMS4_DB="$DB" $SMS4 group create 3 "美食獵人" --description "全台美食踩點，餐廳推薦與食譜分享"
+SMS4_DB="$DB" $SMS4 group join 4 1
+SMS4_DB="$DB" $SMS4 group join 4 2
+SMS4_DB="$DB" $SMS4 group join 4 4
+SMS4_DB="$DB" $SMS4 group join 4 5
+# Jack 開 1 個社團
+SMS4_DB="$DB" $SMS4 group create 10 "環遊世界" --description "旅行攻略、各國文化體驗、背包客經驗分享"
+SMS4_DB="$DB" $SMS4 group join 5 11
+SMS4_DB="$DB" $SMS4 group join 5 12
+SMS4_DB="$DB" $SMS4 group join 5 13
+SMS4_DB="$DB" $SMS4 group join 5 14
+SMS4_DB="$DB" $SMS4 group join 5 15
+# May 開 1 個社團
+SMS4_DB="$DB" $SMS4 group create 13 "手作同好" --description "皮革、布藝、金工等手作交流園地"
+SMS4_DB="$DB" $SMS4 group join 6 1
+SMS4_DB="$DB" $SMS4 group join 6 7
+SMS4_DB="$DB" $SMS4 group join 6 9
+
+echo ""
+echo "=== 11. 社團貼文 ==="
+SMS4_DB="$DB" $SMS4 group post add 1 1 "大家分享一下最近拍的照片吧！我昨天去陽明山拍了芒草"
+SMS4_DB="$DB" $SMS4 group post add 1 2 "最近在學人像攝影，有沒有推薦的鏡頭？"
+SMS4_DB="$DB" $SMS4 group post add 1 3 "推薦台北華山，很好拍！"
+SMS4_DB="$DB" $SMS4 group post add 2 1 "這週六打算去爬七星山，有人要一起嗎？"
+SMS4_DB="$DB" $SMS4 group post add 2 4 "七星山步道很美！我上次去走東峰路線"
+SMS4_DB="$DB" $SMS4 group post add 2 8 "我可以去！需要帶什麼裝備嗎？"
+SMS4_DB="$DB" $SMS4 group post add 4 3 "今天發現永康街一家新開的拉麵店，湯頭很濃郁！"
+SMS4_DB="$DB" $SMS4 group post add 4 1 "求地址！改天去試試"
+SMS4_DB="$DB" $SMS4 group post add 5 10 "剛從京都回來，分享楓葉季攻略"
+SMS4_DB="$DB" $SMS4 group post add 5 11 "京都真的百去不厭！推薦秋天的嵐山"
+SMS4_DB="$DB" $SMS4 group post add 6 13 "新做了植鞣革短夾，來分享製作過程"
+
+echo ""
 echo "=== 假資料填入完成 ==="
 echo ""
 echo "  使用者: 15 筆"
@@ -232,6 +280,8 @@ echo "  交友資料: 15 筆"
 echo "  興趣標籤: 30 筆"
 echo "  商店:    5 間"
 echo "  商品:    21 項"
+echo "  社團:    6 個"
+echo "  社團貼文: 11 筆（含留言）"
 echo ""
 echo "登入帳號（密碼皆為 <username>123）："
 echo "  alice / bob / carol / dave / eve / frank / grace"
