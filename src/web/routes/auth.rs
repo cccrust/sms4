@@ -48,7 +48,8 @@ pub async fn login(
     Json(payload): Json<LoginPayload>,
 ) -> Result<Json<serde_json::Value>, AppError> {
     let conn = state.conn.lock().unwrap();
-    let token = auth::login(&conn, &payload.username, &payload.password)?;
+    let token = auth::login(&conn, &payload.username, &payload.password)
+        .map_err(|_| AppError::BadRequest("帳號或密碼錯誤".into()))?;
     let user_id = auth::get_user_by_token(&conn, &token)?
         .ok_or_else(|| AppError::Internal("登入後取得使用者失敗".into()))?;
     let u = user::get_user(&conn, user_id)?
